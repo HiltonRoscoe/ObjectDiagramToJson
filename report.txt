@@ -4,8 +4,7 @@
 #foreach ($package in $sorter.sort($packages, "qualifiedName"))
 #set($qualifiedName = $package.qualifiedName)
 #set ($classList = $array.createArray())
-#foreach ($element in $report.getOwnedElementsIncludingAdditional($package, true))
-#if ($element.elementType == "instancespecification")
+#macro( instanceSpec $element)
 #foreach($classifier in $element.classifier)
 #set ($className = $classifier.name)
 #set ($classOwner = $classifier.owner.name)
@@ -17,11 +16,21 @@ const $element.name = {
 #if ($slot.hasValue())
 #foreach($valueSpecification in $slot.getValue())
 ## $valueSpecification.getClass().getName()
+HEBBO $valueSpecification.instance.getValue()
+$valueSpecification.instance.getClass()
+#foreach($field in $valueSpecification.class.getMethods())
+$field.getName()
+HI
+#end
 "$slotName": "$report.createValueSpecificationText($valueSpecification)"
 #end
 #end
 #end
 };
+#end
+#foreach ($element in $report.getOwnedElementsIncludingAdditional($package, true))
+#if ($element.elementType == "instancespecification")
+#instanceSpec($element)
 #end
 #end
 #end
