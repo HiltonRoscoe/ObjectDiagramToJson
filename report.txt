@@ -1,0 +1,27 @@
+#set($packages = $array.createArray())
+#set($void = $array.addCollection($packages, $Package))
+#set($void = $array.addCollection($packages, $SmartPackage))
+#foreach ($package in $sorter.sort($packages, "qualifiedName"))
+#set($qualifiedName = $package.qualifiedName)
+#set ($classList = $array.createArray())
+#foreach ($element in $report.getOwnedElementsIncludingAdditional($package, true))
+#if ($element.elementType == "instancespecification")
+#foreach($classifier in $element.classifier)
+#set ($className = $classifier.name)
+#set ($classOwner = $classifier.owner.name)
+#end
+const $element.name = {
+    "@type": "$classOwner#[[.]]#$className",
+#foreach($slot in $element.slot) 
+#set ($slotName = $slot.getDefiningFeature().getName())
+#if ($slot.hasValue())
+#foreach($valueSpecification in $slot.getValue())
+## $valueSpecification.getClass().getName()
+"$slotName": "$report.createValueSpecificationText($valueSpecification)"
+#end
+#end
+#end
+};
+#end
+#end
+#end
