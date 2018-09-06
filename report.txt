@@ -9,28 +9,25 @@
 #set ($className = $classifier.name)
 #set ($classOwner = $classifier.owner.name)
 #end
-const $element.name = {
+{
     "@type": "$classOwner#[[.]]#$className",
 #foreach($slot in $element.slot) 
 #set ($slotName = $slot.getDefiningFeature().getName())
 #if ($slot.hasValue())
 #foreach($valueSpecification in $slot.getValue())
-## $valueSpecification.getClass().getName()
-HEBBO $valueSpecification.instance.getValue()
-$valueSpecification.instance.getClass()
-#foreach($field in $valueSpecification.class.getMethods())
-$field.getName()
-HI
-#end
-"$slotName": "$report.createValueSpecificationText($valueSpecification)"
+#if($valueSpecification.instance && $valueSpecification.instance.class.name != "com.nomagic.uml2.ext.magicdraw.classes.mdkernel.impl.EnumerationLiteralImpl")
+"$slotName": #instanceSpec($valueSpecification.instance),
+#else
+"$slotName": "$report.createValueSpecificationText($valueSpecification)",
 #end
 #end
 #end
-};
+#end
+}
 #end
 #foreach ($element in $report.getOwnedElementsIncludingAdditional($package, true))
 #if ($element.elementType == "instancespecification")
-#instanceSpec($element)
+const $element.name = #instanceSpec($element);
 #end
 #end
 #end
