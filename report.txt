@@ -4,22 +4,35 @@
 #foreach ($package in $sorter.sort($packages, "qualifiedName"))
 #set($qualifiedName = $package.qualifiedName)
 #set ($classList = $array.createArray())
+## SUPPORTS NESTING OF INSTANCES INTO SINGLE JSON
 #macro( instanceSpec $element)
 #foreach($classifier in $element.classifier)
 #set ($className = $classifier.name)
 #set ($classOwner = $classifier.owner.name)
 #end
-{
-    "@type": "$classOwner#[[.]]#$className",
-#foreach($slot in $element.slot) 
-#set ($slotName = $slot.getDefiningFeature().getName())
-#if ($slot.hasValue())
+#macro( outputExpr $slot)
 #foreach($valueSpecification in $slot.getValue())
+## NEED TO DO EXTRA CHECK TO MAKE SURE INSTANCESPEC ISN'T FOR ENUM
 #if($valueSpecification.instance && $valueSpecification.instance.class.name != "com.nomagic.uml2.ext.magicdraw.classes.mdkernel.impl.EnumerationLiteralImpl")
-"$slotName": #instanceSpec($valueSpecification.instance),
+#instanceSpec($valueSpecification.instance),
 #else
-"$slotName": "$report.createValueSpecificationText($valueSpecification)",
+"$report.createValueSpecificationText($valueSpecification)",
 #end
+#end
+#end
+{
+"@type": "$classOwner#[[.]]#$className",
+#foreach($slot in $element.slot) 
+#set ($definingFeature = $slot.getDefiningFeature())
+#set ($slotName = $definingFeature.getName())
+#if ($slot.hasValue())
+"$slotName":
+#if($definingFeature.upper != "1")
+[
+#outputExpr($slot)
+],
+#else
+#outputExpr($slot)
 #end
 #end
 #end
