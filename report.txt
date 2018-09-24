@@ -10,6 +10,7 @@
 #set ($className = $classifier.name)
 #set ($classOwner = $classifier.owner.name)
 #end
+## OUTPUTS value
 #macro( outputExpr $slot)
 #foreach($valueSpecification in $slot.getValue())
 ## NEED TO DO EXTRA CHECK TO MAKE SURE INSTANCESPEC ISN'T FOR ENUM
@@ -33,7 +34,7 @@
 #outputExpr($slot)
 ]#if($foreach.hasNext), #end
 #else
-#outputExpr($slot)
+#outputExpr($slot)#if($foreach.hasNext), #end
 #end
 #end
 #end
