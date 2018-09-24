@@ -14,10 +14,11 @@
 #foreach($valueSpecification in $slot.getValue())
 ## NEED TO DO EXTRA CHECK TO MAKE SURE INSTANCESPEC ISN'T FOR ENUM
 #if($valueSpecification.instance && $valueSpecification.instance.class.name != "com.nomagic.uml2.ext.magicdraw.classes.mdkernel.impl.EnumerationLiteralImpl")
-#instanceSpec($valueSpecification.instance),
+#instanceSpec($valueSpecification.instance)
 #else
-"$report.createValueSpecificationText($valueSpecification)",
+"$report.createValueSpecificationText($valueSpecification)"
 #end
+#if($foreach.hasNext), #end
 #end
 #end
 {
@@ -30,7 +31,7 @@
 #if($definingFeature.upper != "1")
 [
 #outputExpr($slot)
-],
+]#if($foreach.hasNext), #end
 #else
 #outputExpr($slot)
 #end
@@ -38,9 +39,12 @@
 #end
 }
 #end
+{
 #foreach ($element in $report.getOwnedElementsIncludingAdditional($package, true))
 #if ($element.elementType == "instancespecification")
-const $element.name = #instanceSpec($element);
+##const $element.name = #instanceSpec($element);
+"$element.name": #instanceSpec($element)#if($foreach.hasNext), #end
 #end
 #end
+}
 #end
